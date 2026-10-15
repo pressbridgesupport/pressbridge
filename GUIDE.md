@@ -1560,9 +1560,9 @@ reporting a breach.
 
 ## 19. Support and license
 
-- **Support:** support@pressbridge.dev. Include the output from the troubleshooting
+- **Support:** pressbridge.support@gmail.com. Include the output from the troubleshooting
   section.
-- **Security issues:** security@pressbridge.dev, please not a public issue.
+- **Security issues:** pressbridge.support@gmail.com, please not a public issue.
 - **Changelog:** [CHANGELOG.md](CHANGELOG.md)
 - **License:** Pro and Agent — [LICENSE-PRO.md](LICENSE-PRO.md). Free — MIT.
 

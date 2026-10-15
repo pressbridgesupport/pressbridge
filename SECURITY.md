@@ -54,4 +54,4 @@ Every tool call is appended to `data_dir/audit.jsonl` with time, site, arguments
 
 ## Reporting a vulnerability
 
-Email security@pressbridge.dev. Please don't open a public issue.
+Email pressbridge.support@gmail.com. Please don't open a public issue.

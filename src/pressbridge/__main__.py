@@ -43,7 +43,7 @@ def _cmd_check(cfg) -> int:
 
 def _cmd_watch(cfg, a) -> int:
     if EDITION != "agent":
-        print("PressBridge Watch is part of PressBridge Agent (https://pressbridge.dev).", file=sys.stderr)
+        print("PressBridge Watch is part of PressBridge Agent (https://pressbridgesupport.github.io/pressbridge).", file=sys.stderr)
         return 2
     from .watch import parse_settings
     from .watch import runner

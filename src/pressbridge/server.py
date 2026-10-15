@@ -43,7 +43,7 @@ def build_server(cfg: Config) -> MCPServer:
         title="PressBridge for WordPress",
         version=__version__,
         instructions=INSTRUCTIONS,
-        website_url="https://pressbridge.dev",
+        website_url="https://pressbridgesupport.github.io/pressbridge",
     )
 
     def audited(tool_name: str):

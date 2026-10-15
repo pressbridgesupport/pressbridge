@@ -107,7 +107,7 @@ def match_command(site: Site, args: list[str]) -> tuple[str, ...]:
     if site.wp_profile == "readonly" and any(
         tuple(pos[:n]) in MAINTENANCE for n in (2, 3)
     ):
-        hint = (" Changes like this need PressBridge Pro (https://pressbridge.dev)." if EDITION == "free"
+        hint = (" Changes like this need PressBridge Pro (https://pressbridgesupport.github.io/pressbridge)." if EDITION == "free"
                 else " It needs `wp_profile: maintenance` on this site.")
     raise SandboxError(f"`wp {shown}` is not on the allow-list.{hint} Call wp_commands to see what is allowed.")
 
