@@ -1,0 +1,13 @@
+# PressBridge configuration
+# Copy to config.yaml and edit. Restart the container after changes.
+
+# Where the audit log, backups and trash are kept. Outside every webroot.
+data_dir: /data
+
+wp_bin: wp
+wp_timeout: 120
+
+sites:
+  mysite:
+    root: /var/www/mysite/public_html
+    # Free edition: one site, read-only.
