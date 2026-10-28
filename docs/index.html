@@ -221,6 +221,9 @@ details p { margin-top: 12px; color: var(--ink-2); max-width: 44em; }
 
 footer { padding-block: 40px; border-top: 1px solid var(--rule); font-size: 0.9rem; color: var(--ink-2); }
 footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+footer .footer-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+footer a { color: var(--ink-2); }
+footer a:hover { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:hover { transform: none; } }
 </style>
@@ -431,7 +434,7 @@ footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; g
         <div class="feature"><h3>Alerts where you already are</h3><p>Email, Slack, Discord, or push notifications on your phone through ntfy.</p></div>
       </div>
       <div class="ctas watch-cta">
-        <a class="btn btn-primary" href="https://pressbridge.lemonsqueezy.com/checkout/buy/be585ed0-3652-4d68-9f5e-ac227c39a1bb">Start Agent: $15/month</a>
+        <a class="btn btn-primary" href="mailto:pressbridge.support@gmail.com?subject=Buy%20PressBridge%20Agent" data-plan="agent">Start Agent: $15/month</a>
         <span class="fine">Includes everything in Agency. Cancel anytime.</span>
       </div>
     </div>
@@ -502,7 +505,7 @@ docker compose --profile tls up -d</pre>
             <li>Unlimited sites</li>
             <li>Upgrade to Agency anytime for the difference</li>
           </ul>
-          <a class="btn btn-ghost" href="https://pressbridge.lemonsqueezy.com/checkout/buy/621e02bc-123e-404d-afe8-3800b2ec7371">Buy Solo</a>
+          <a class="btn btn-ghost" href="mailto:pressbridge.support@gmail.com?subject=Buy%20PressBridge%20Solo" data-plan="solo">Buy Solo</a>
         </div>
         <div class="plan featured">
           <span class="tag">Most agencies</span>
@@ -516,7 +519,7 @@ docker compose --profile tls up -d</pre>
             <li>HTTPS server, Docker, tokens</li>
             <li>Audit log and all 3 skills</li>
           </ul>
-          <a class="btn btn-primary" href="https://pressbridge.lemonsqueezy.com/checkout/buy/bbeb6cfe-d46a-40b9-bb7c-3fb0e0c77ac0">Buy Agency</a>
+          <a class="btn btn-primary" href="mailto:pressbridge.support@gmail.com?subject=Buy%20PressBridge%20Agency" data-plan="agency">Buy Agency</a>
         </div>
         <div class="plan agent">
           <span class="tag">New</span>
@@ -530,10 +533,10 @@ docker compose --profile tls up -d</pre>
             <li>All updates while subscribed</li>
             <li>Cancel anytime</li>
           </ul>
-          <a class="btn btn-primary" href="https://pressbridge.lemonsqueezy.com/checkout/buy/be585ed0-3652-4d68-9f5e-ac227c39a1bb">Start Agent</a>
+          <a class="btn btn-primary" href="mailto:pressbridge.support@gmail.com?subject=Buy%20PressBridge%20Agent" data-plan="agent">Start Agent</a>
         </div>
       </div>
-      <p class="fine" style="margin-top:20px">Prices in USD. EU VAT is calculated at checkout. Claude's review in Watch runs on your own Anthropic API key, billed by Anthropic.</p>
+      <p class="fine" style="margin-top:20px">Prices in USD. Taxes such as EU VAT are calculated at checkout. Orders are processed by our online reseller, which is the merchant of record. See the <a href="terms.html">terms</a> and <a href="refund.html">refund policy</a>. Claude's review in Watch runs on your own Anthropic API key, billed by Anthropic.</p>
     </div>
   </section>
 
@@ -557,10 +560,25 @@ docker compose --profile tls up -d</pre>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 PressBridge. Not affiliated with WordPress or Anthropic.</span>
-    <span>pressbridge.support@gmail.com</span>
+    <span>© 2026 PressBridge, made by Paul Negrea, Romania. Not affiliated with WordPress or Anthropic.</span>
+    <nav class="footer-links" aria-label="Legal"><a href="terms.html">Terms</a><a href="refund.html">Refunds</a><a href="privacy.html">Privacy</a><a href="mailto:pressbridge.support@gmail.com">pressbridge.support@gmail.com</a></nav>
   </div>
 </footer>
+
+<script>
+/* Checkout links. Paste each plan's payment link between the quotes
+   (Stripe Payment Link, Polar checkout link, ...). While a link is empty,
+   its button opens an email to support instead. */
+const CHECKOUT = {
+  solo:   "https://buy.stripe.com/fZu3cuatHdJs6r5d926AM00",
+  agency: "https://buy.stripe.com/bJe5kC45jdJscPted66AM03",
+  agent:  "https://buy.stripe.com/dRm8wO9pDbBk8zdd926AM04",
+};
+document.querySelectorAll("a[data-plan]").forEach(function (a) {
+  var url = CHECKOUT[a.dataset.plan];
+  if (url) a.href = url;
+});
+</script>
 
 </body>
 </html>

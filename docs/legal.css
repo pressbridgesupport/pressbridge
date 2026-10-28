@@ -1,0 +1,59 @@
+/* Shared styles for the legal pages (terms, refunds, privacy). Tokens match index.html. */
+:root {
+  --paper: #f3f5f7; --paper-2: #e6eaee; --card: #ffffff; --ink: #142231; --ink-2: #4a5a6b;
+  --rule: #cfd6de; --amber: #b86a00; --amber-soft: #fbecd5;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1620; --paper-2: #142130; --card: #172636; --ink: #e5ecf3; --ink-2: #9fb0c2;
+    --rule: #2a3b4d; --amber: #f0a43a; --amber-soft: #3a2a12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e1620; --paper-2: #142130; --card: #172636; --ink: #e5ecf3; --ink-2: #9fb0c2;
+  --rule: #2a3b4d; --amber: #f0a43a; --amber-soft: #3a2a12; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.65; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.top { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 700; font-size: 1.2rem; text-decoration: none; }
+.brand svg { flex: none; }
+.nav { display: flex; gap: 20px; align-items: center; font-size: 0.95rem; }
+.nav a { text-decoration: none; color: var(--ink-2); }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--ink); }
+.nav a[aria-current="page"] { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 560px) { .nav .hide-sm { display: none; } }
+
+main.doc { padding-block: 64px 88px; }
+.doc .inner { max-width: 44em; }
+.eyebrow { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+.doc h1 { font-family: var(--display); font-size: clamp(2rem, 4.4vw, 3rem); font-weight: 700; line-height: 1.08; letter-spacing: -0.015em; margin: 10px 0 10px; text-wrap: balance; }
+.doc .updated { color: var(--ink-2); font-size: 0.95rem; margin: 0 0 28px; }
+.doc .summary { background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--amber); border-radius: 10px; padding: 18px 22px; margin: 0 0 40px; }
+.doc .summary p { margin: 0 0 8px; font-weight: 600; }
+.doc .summary ul { margin: 0; padding-left: 20px; }
+.doc h2 { font-family: var(--display); font-size: 1.35rem; font-weight: 600; line-height: 1.2; margin: 40px 0 10px; scroll-margin-top: 80px; }
+.doc p { margin: 0 0 14px; }
+.doc ul, .doc ol { margin: 0 0 14px; padding-left: 22px; }
+.doc li { margin-bottom: 6px; }
+.doc table { width: 100%; border-collapse: collapse; margin: 6px 0 18px; font-size: 0.95rem; background: var(--card); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+.doc th, .doc td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+.doc th { background: var(--paper-2); font-weight: 600; }
+.doc tr:last-child td { border-bottom: 0; }
+.doc .caps { text-transform: uppercase; font-size: 0.92rem; letter-spacing: 0.01em; }
+@media (max-width: 560px) { .doc table, .doc thead, .doc tbody, .doc tr, .doc th, .doc td { display: block; } .doc thead { display: none; } .doc td { border-bottom: 0; padding: 6px 14px; } .doc td:first-child { padding-top: 12px; font-weight: 600; } .doc tr { border-bottom: 1px solid var(--rule); padding-bottom: 8px; } }
+
+footer { padding-block: 40px; border-top: 1px solid var(--rule); font-size: 0.9rem; color: var(--ink-2); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+footer a { color: var(--ink-2); }
+footer a:hover { color: var(--ink); }
