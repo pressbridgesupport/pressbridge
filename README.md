@@ -2,7 +2,7 @@
 
 **Let Claude look inside your WordPress site safely: read-only, sandboxed, secrets hidden.**
 
-[Website](https://pressbridgesupport.github.io/pressbridge) · [Get Pro](https://pressbridge.lemonsqueezy.com/checkout/buy/bbeb6cfe-d46a-40b9-bb7c-3fb0e0c77ac0) · [User guide](GUIDE.md) · [Security](SECURITY.md)
+[Website](https://pressbridgesupport.github.io/pressbridge) · [Get Pro](https://pressbridgesupport.github.io/pressbridge/#pricing) · [User guide](GUIDE.md) · [Security](SECURITY.md)
 
 ```
 you     On mysite, where is the footer phone number set? And show me the DB password.
