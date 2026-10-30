@@ -570,9 +570,9 @@ docker compose --profile tls up -d</pre>
    (Stripe Payment Link, Polar checkout link, ...). While a link is empty,
    its button opens an email to support instead. */
 const CHECKOUT = {
-  solo:   "https://buy.stripe.com/fZu3cuatHdJs6r5d926AM00",
-  agency: "https://buy.stripe.com/bJe5kC45jdJscPted66AM03",
-  agent:  "https://buy.stripe.com/dRm8wO9pDbBk8zdd926AM04",
+  solo:   "https://pressbridge.lemonsqueezy.com/checkout/buy/ae819afa-ad44-4267-a6c0-fd9b1f5e3822",
+  agency: "https://pressbridge.lemonsqueezy.com/checkout/buy/d3a2e677-bfe6-4544-a304-81d02f604807",
+  agent:  "https://pressbridge.lemonsqueezy.com/checkout/buy/174b2377-6320-4e89-99bc-970400f15b50",
 };
 document.querySelectorAll("a[data-plan]").forEach(function (a) {
   var url = CHECKOUT[a.dataset.plan];
