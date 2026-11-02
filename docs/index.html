@@ -74,6 +74,8 @@ p { margin: 0; }
 code, .mono { font-family: var(--mono); font-size: 0.9em; }
 .stack { display: flex; flex-direction: column; gap: 20px; }
 .section-head { display: flex; flex-direction: column; gap: 14px; max-width: 46em; margin-bottom: 44px; }
+.video { position: relative; aspect-ratio: 16 / 9; max-width: 960px; border-radius: 12px; overflow: hidden; background: var(--term-bg); box-shadow: 0 24px 60px -24px rgba(8, 16, 25, 0.55); }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* nav */
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
@@ -279,6 +281,18 @@ footer a:hover { color: var(--ink); }
           <div class="t-res"><span class="t-ok">✓ exit 0</span>  5.9.8 → 6.0.1</div>
           <div class="t-say">Done. The header now shows 0745 123 456 (undo with backup 20261014T091322.418302Z). Contact Form 7 is updated. I can't read wp-config.php: PressBridge blocks it so database passwords never reach me.</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">See it in action</span>
+        <h2>One minute: edit, back up, undo, refuse, log.</h2>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube-nocookie.com/embed/hucKMlugERw?rel=0" title="PressBridge demo video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </div>
     </div>
   </section>
