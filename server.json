@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.pressbridgesupport/pressbridge",
+  "title": "PressBridge",
+  "description": "Safe, audited Claude access to WordPress sites: secrets hidden, backups, undo, WP-CLI allow-list.",
+  "websiteUrl": "https://pressbridgesupport.github.io/pressbridge",
+  "repository": {
+    "url": "https://github.com/pressbridgesupport/pressbridge",
+    "source": "github"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "pressbridge",
+      "version": "1.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "serve"
+        },
+        {
+          "type": "named",
+          "name": "--config",
+          "description": "Path to the PressBridge config.yaml that lists your WordPress sites",
+          "isRequired": true,
+          "format": "filepath"
+        }
+      ]
+    }
+  ]
+}
