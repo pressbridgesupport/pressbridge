@@ -16,6 +16,10 @@ dependencies = [
     "starlette>=0.40",
 ]
 
+[project.urls]
+Homepage = "https://pressbridgesupport.github.io/pressbridge"
+Source = "https://github.com/pressbridgesupport/pressbridge"
+
 [project.optional-dependencies]
 dev = ["pytest>=8", "httpx>=0.27"]
 

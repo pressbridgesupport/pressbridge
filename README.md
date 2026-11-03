@@ -1,5 +1,7 @@
 # PressBridge Free
 
+<!-- mcp-name: io.github.pressbridgesupport/pressbridge -->
+
 **Let Claude look inside your WordPress site safely: read-only, sandboxed, secrets hidden.**
 
 [Website](https://pressbridgesupport.github.io/pressbridge) · [Demo video](https://youtu.be/hucKMlugERw) · [Get Pro](https://pressbridgesupport.github.io/pressbridge/#pricing) · [User guide](GUIDE.md) · [Security](SECURITY.md)
