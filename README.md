@@ -36,7 +36,7 @@ sudo apt install python3-venv php-cli php-mysql
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 sudo install wp-cli.phar /usr/local/bin/wp
 python3 -m venv ~/pressbridge-venv
-~/pressbridge-venv/bin/pip install ./pressbridge
+~/pressbridge-venv/bin/pip install pressbridge
 mkdir -p ~/.pressbridge
 cat > ~/.pressbridge/config.yaml <<EOF
 data_dir: $HOME/.pressbridge/data

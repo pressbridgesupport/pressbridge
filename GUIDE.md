@@ -365,9 +365,15 @@ wp --info
 Run this as the user that owns the site files (or a user in their group).
 
 ```bash
-unzip pressbridge-pro-1.1.0.zip        # or pressbridge-free-1.1.0.zip
 python3 -m venv ~/pressbridge-venv
+
+# Free edition, from PyPI:
+~/pressbridge-venv/bin/pip install pressbridge
+
+# Pro or Agent, from the zip you downloaded:
+unzip pressbridge-pro-1.1.0.zip
 ~/pressbridge-venv/bin/pip install ./pressbridge
+
 ~/pressbridge-venv/bin/pressbridge --version
 ```
 
@@ -1192,7 +1198,8 @@ Your backups and audit log are in the `pressbridge-data` volume and are kept.
 Python install:
 
 ```bash
-~/pressbridge-venv/bin/pip install --upgrade ./pressbridge
+~/pressbridge-venv/bin/pip install --upgrade pressbridge      # Free (PyPI)
+~/pressbridge-venv/bin/pip install --upgrade ./pressbridge    # Pro or Agent (new zip)
 sudo systemctl restart pressbridge     # if you run it as a service
 ```
 
