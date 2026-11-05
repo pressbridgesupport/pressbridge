@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0 — 2026-11
+
+New: **WooCommerce** through WP-CLI.
+
+- Read products, variations, categories, tags, attributes, coupons, shipping zones and
+  taxes (all editions).
+- Create and update products, variations, categories and coupons (Pro, `maintenance` profile).
+- Orders, customers and refunds hold personal data, so they stay off unless the site has
+  `wc_personal_data: true`; then Claude can read them and update order status (Pro).
+- New per-site `wc_user`: the WordPress user WooCommerce commands run as. PressBridge adds
+  `--user` itself; Claude can't choose another user.
+- Never allowed: deleting, `--force`, payment gateways, store settings, webhooks, API keys.
+
 ## 1.2.0 — 2026-11
 
 - New `check_site_health` tool (all editions): loads the site's key pages and boots

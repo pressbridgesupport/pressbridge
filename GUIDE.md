@@ -83,7 +83,7 @@ Check which edition you have:
 
 ```bash
 pressbridge --version
-# pressbridge 1.2.0 (pro)
+# pressbridge 1.3.0 (pro)
 ```
 
 ---
@@ -119,11 +119,11 @@ servers, RunCloud, Ploi, SpinupWP, GridPane, ...).
 
 ```bash
 # on your computer
-scp pressbridge-pro-1.2.0.zip you@server:~
+scp pressbridge-pro-1.3.0.zip you@server:~
 
 # on the server
 ssh you@server
-unzip pressbridge-pro-1.2.0.zip
+unzip pressbridge-pro-1.3.0.zip
 cd pressbridge
 ```
 
@@ -255,7 +255,7 @@ docker compose exec pressbridge pressbridge check
 Expected:
 
 ```
-PressBridge 1.2.0 (pro)
+PressBridge 1.3.0 (pro)
 Data dir: /data
 - acme: root=/var/www/acme.com/public_html mode=write wp=/var/www/acme.com/public_html profile=maintenance
     WordPress 6.8.3
@@ -264,7 +264,7 @@ OK
 
 ```bash
 curl https://mcp.yourdomain.com/health
-# {"ok":true,"version":"1.2.0"}
+# {"ok":true,"version":"1.3.0"}
 
 curl -s -o /dev/null -w "%{http_code}\n" -X POST https://mcp.yourdomain.com/mcp
 # 401   ← correct: no token, no access
@@ -371,7 +371,7 @@ python3 -m venv ~/pressbridge-venv
 ~/pressbridge-venv/bin/pip install pressbridge
 
 # Pro or Agent, from the zip you downloaded:
-unzip pressbridge-pro-1.2.0.zip
+unzip pressbridge-pro-1.3.0.zip
 ~/pressbridge-venv/bin/pip install ./pressbridge
 
 ~/pressbridge-venv/bin/pressbridge --version
@@ -458,6 +458,8 @@ Unset variables become empty, and empty tokens or hosts are ignored.
 | `wp_path` | auto | WordPress install folder for WP-CLI. Detected automatically when `root` contains `wp-includes`. Set it for sites where WordPress is in a subfolder (e.g. `root: /var/www/site`, `wp_path: /var/www/site/wp`). |
 | `wp_url` | none | The site URL. Needed for multisite; also shown to Claude, and the address the health check loads. |
 | `health_check` | on | After each change, load the site and undo the change if it broke it. See [Automatic check and rollback](#automatic-check-and-rollback-pro). `false` turns it off. **Pro** |
+| `wc_user` | none | WordPress user that WooCommerce commands (`wp wc ...`) run as, e.g. `shop-manager`. Needed for any `wc` command. Use a Shop manager account, not an administrator. |
+| `wc_personal_data` | `false` | `true` lets Claude read orders, customers and refunds (names, emails, addresses). Off by default. |
 | `deny` | — | Extra glob patterns to hide, added to the defaults. |
 | `allow` | — | Default patterns to remove from the deny list (e.g. `debug.log`). |
 | `replace_default_deny` | `false` | `true` drops all default deny patterns. Not recommended. |
@@ -939,6 +941,10 @@ without a shell.
 | `site list` | Multisite |
 | `maintenance-mode status`, `language core list` | Status |
 | `search-replace ... --dry-run` | Preview only |
+| `wc product list / get`, `wc product_variation list / get` | WooCommerce products (needs `wc_user`) |
+| `wc product_cat list`, `wc product_tag list`, `wc product_attribute list` | WooCommerce catalog |
+| `wc shop_coupon list / get`, `wc shipping_zone list`, `wc tax list` | WooCommerce store setup |
+| `wc shop_order list / get`, `wc customer list / get`, `wc shop_order_refund list` | Only with `wc_personal_data: true` |
 
 ### Added by `wp_profile: maintenance` (Pro)
 
@@ -955,6 +961,9 @@ without a shell.
 | `maintenance-mode activate / deactivate` | |
 | `language core install / update` | |
 | `search-replace` (without `--dry-run`) | Changes the database |
+| `wc product create / update`, `wc product_variation update` | Prices, stock, descriptions |
+| `wc product_cat create`, `wc shop_coupon create / update` | |
+| `wc shop_order update` | Order status and notes; only with `wc_personal_data: true` |
 
 ### Always refused
 
@@ -969,6 +978,8 @@ without a shell.
   `new_admin_email`, `users_can_register`, `default_role`, `active_plugins`,
   `template`, `stylesheet`, `wp_user_roles`.
 - `plugin/theme install` from a URL or `.zip`.
+- WooCommerce: deleting anything, `--force`, `--user` (PressBridge sets it from `wc_user`),
+  payment gateways, store settings, webhooks and API keys.
 
 ### Testing a command yourself
 
@@ -1245,7 +1256,7 @@ claude mcp add --transport http pressbridge https://mcp.yourdomain.com/mcp \
 ```bash
 cd ~
 cp pressbridge/config.yaml pressbridge/.env /tmp/      # keep your settings
-unzip -o pressbridge-pro-1.2.0.zip
+unzip -o pressbridge-pro-1.3.0.zip
 cp /tmp/config.yaml /tmp/.env pressbridge/
 cd pressbridge
 docker compose --profile tls up -d --build
@@ -1357,7 +1368,7 @@ Docker:
 ```bash
 cd ~/pressbridge
 docker compose --profile tls down -v       # -v also deletes backups and audit log
-docker image rm pressbridge:1.2.0
+docker image rm pressbridge:1.3.0
 cd ~ && rm -rf pressbridge
 ```
 

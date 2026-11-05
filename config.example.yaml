@@ -11,3 +11,5 @@ sites:
   mysite:
     root: /var/www/mysite/public_html
     # Free edition: one site, read-only.
+    # WooCommerce: the user `wp wc ...` commands run as (a Shop manager is enough).
+    # wc_user: shop-manager

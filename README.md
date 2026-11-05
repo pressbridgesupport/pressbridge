@@ -24,6 +24,8 @@ for one site: perfect for debugging, audits and "where is this text coming from?
 - `wp-config.php`, `.env`, SQL dumps, keys and `.git` are invisible
 - Nothing outside the site folder, symlink tricks included
 - Read-only WP-CLI: versions, plugin and theme lists, checksums, cron, users
+- WooCommerce, read-only: products, stock, prices, coupons, shipping and taxes
+  (set `wc_user` in the config; orders and customers only if you turn them on)
 - `site_overview`: version and pending updates in one call
 - `check_site_health`: is the site up right now? Loads key pages and boots WordPress
 - Includes the **wp-care-report** skill: a client-ready health and security report
