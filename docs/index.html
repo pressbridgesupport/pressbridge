@@ -363,6 +363,7 @@ footer a:hover { color: var(--ink); }
             <li><code>wp plugin update akismet</code><span>On sites you mark for maintenance</span></li>
             <li><code>wp core update && update-db</code><span>Core updates, last</span></li>
             <li><code>wp cache flush</code><span>After theme changes</span></li>
+            <li><code>wp wc product update 42 --regular_price=19</code><span>WooCommerce prices and stock</span></li>
             <li><code>wp core verify-checksums</code><span>Spot hacked core files</span></li>
             <li><code>edit_file header.php</code><span>Backed up and PHP-checked</span></li>
             <li><code>search-replace --dry-run</code><span>Preview before migrating</span></li>
@@ -376,6 +377,7 @@ footer a:hover { color: var(--ink); }
             <li><code>wp config get DB_PASSWORD</code><span>Secrets stay secret</span></li>
             <li><code>wp user create --role=administrator</code><span>No new admins</span></li>
             <li><code>wp option update siteurl</code><span>Protected options locked</span></li>
+            <li><code>wp wc payment_gateway list</code><span>No payment keys, no deletes</span></li>
             <li><code>read_file ../../etc/passwd</code><span>Nothing outside the site folder</span></li>
           </ul>
         </div>
@@ -531,6 +533,7 @@ docker compose --profile tls up -d</pre>
             <li>1 site, read-only</li>
             <li>Read, list and search files</li>
             <li>Read-only WP-CLI and site overview</li>
+            <li>WooCommerce products, read-only</li>
             <li>Care-report skill</li>
             <li>SSH connection</li>
           </ul>
@@ -557,6 +560,7 @@ docker compose --profile tls up -d</pre>
             <li>Your whole team</li>
             <li>Edits with backups and undo</li>
             <li>Updates, cache, options, posts</li>
+            <li>WooCommerce prices, stock, coupons</li>
             <li>HTTPS server, Docker, tokens</li>
             <li>Audit log and all 3 skills</li>
           </ul>
