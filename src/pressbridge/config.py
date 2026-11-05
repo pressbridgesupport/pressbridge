@@ -59,6 +59,8 @@ class Site:
     max_write_bytes: int = 2_000_000
     watched: bool = True
     health: HealthSettings = field(default_factory=HealthSettings)
+    wc_user: str | None = None
+    wc_personal_data: bool = False
 
     @property
     def writable(self) -> bool:
@@ -166,6 +168,8 @@ def _parse_site(name: str, raw: dict) -> Site:
         max_write_bytes=int(raw.get("max_write_bytes", 2_000_000)),
         watched=bool(raw.get("watch", True)),
         health=health,
+        wc_user=str(raw["wc_user"]) if raw.get("wc_user") not in (None, "") else None,
+        wc_personal_data=bool(raw.get("wc_personal_data", False)),
     )
 
 

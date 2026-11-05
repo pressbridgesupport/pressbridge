@@ -44,6 +44,28 @@ READONLY: dict[tuple[str, ...], str] = {
     ("maintenance-mode", "status"): "Is maintenance mode on",
     ("language", "core", "list"): "Installed core languages",
     ("search-replace",): "Search/replace in the database (--dry-run required on this profile)",
+    # WooCommerce (needs `wc_user` in the site config)
+    ("wc", "product", "list"): "WooCommerce: list products",
+    ("wc", "product", "get"): "WooCommerce: one product",
+    ("wc", "product_variation", "list"): "WooCommerce: variations of a product",
+    ("wc", "product_variation", "get"): "WooCommerce: one variation",
+    ("wc", "product_cat", "list"): "WooCommerce: product categories",
+    ("wc", "product_tag", "list"): "WooCommerce: product tags",
+    ("wc", "product_attribute", "list"): "WooCommerce: product attributes",
+    ("wc", "shop_coupon", "list"): "WooCommerce: coupons",
+    ("wc", "shop_coupon", "get"): "WooCommerce: one coupon",
+    ("wc", "shipping_zone", "list"): "WooCommerce: shipping zones",
+    ("wc", "tax", "list"): "WooCommerce: tax rates",
+}
+
+# WooCommerce commands that return customers' personal data. Only on sites with
+# `wc_personal_data: true`.
+WC_PERSONAL: dict[tuple[str, ...], str] = {
+    ("wc", "shop_order", "list"): "WooCommerce: list orders (personal data)",
+    ("wc", "shop_order", "get"): "WooCommerce: one order (personal data)",
+    ("wc", "customer", "list"): "WooCommerce: list customers (personal data)",
+    ("wc", "customer", "get"): "WooCommerce: one customer (personal data)",
+    ("wc", "shop_order_refund", "list"): "WooCommerce: refunds of an order (personal data)",
 }
 
 # Extra commands for sites with wp_profile: maintenance.
@@ -70,6 +92,16 @@ MAINTENANCE: dict[tuple[str, ...], str] = {
     ("maintenance-mode", "deactivate"): "Turn off maintenance mode",
     ("language", "core", "install"): "Install a core language",
     ("language", "core", "update"): "Update core languages",
+    ("wc", "product", "create"): "WooCommerce: create a product",
+    ("wc", "product", "update"): "WooCommerce: update a product (price, stock, text...)",
+    ("wc", "product_variation", "update"): "WooCommerce: update a variation",
+    ("wc", "product_cat", "create"): "WooCommerce: create a product category",
+    ("wc", "shop_coupon", "create"): "WooCommerce: create a coupon",
+    ("wc", "shop_coupon", "update"): "WooCommerce: update a coupon",
+}
+
+WC_PERSONAL_MAINTENANCE: dict[tuple[str, ...], str] = {
+    ("wc", "shop_order", "update"): "WooCommerce: update an order (status, notes) (personal data)",
 }
 
 # Flags that could run arbitrary code, reach other hosts, or change the target.
@@ -86,8 +118,12 @@ MAX_OUTPUT = 100_000
 
 def allowed_commands(site: Site) -> dict[tuple[str, ...], str]:
     cmds = dict(READONLY)
+    if site.wc_personal_data:
+        cmds.update(WC_PERSONAL)
     if site.wp_profile == "maintenance":
         cmds.update(MAINTENANCE)
+        if site.wc_personal_data:
+            cmds.update(WC_PERSONAL_MAINTENANCE)
     return cmds
 
 
@@ -104,6 +140,9 @@ def match_command(site: Site, args: list[str]) -> tuple[str, ...]:
             return key
     shown = " ".join(pos[:3]) or "(empty)"
     hint = ""
+    if any(tuple(pos[:3]) in d for d in (WC_PERSONAL, WC_PERSONAL_MAINTENANCE)) and not site.wc_personal_data:
+        raise SandboxError(f"`wp {shown}` returns customers' personal data, so it needs "
+                           "`wc_personal_data: true` in this site's config.")
     if site.wp_profile == "readonly" and any(
         tuple(pos[:n]) in MAINTENANCE for n in (2, 3)
     ):
@@ -145,6 +184,15 @@ def validate(site: Site, args: list[str]) -> tuple[str, ...]:
             raise SandboxError("Only wordpress.org slugs can be installed, not URLs or zip files")
     if cmd == ("user", "list") and not any(a.startswith("--fields") for a in args):
         args.append("--fields=ID,user_login,display_name,roles")
+    if cmd[0] == "wc":
+        if any(a.split("=", 1)[0] == "--user" for a in args):
+            raise SandboxError("--user is set by PressBridge from the site's `wc_user`; don't pass it")
+        if not site.wc_user:
+            raise SandboxError("WooCommerce commands need `wc_user` (the login or ID of a Shop manager or administrator) "
+                               "in this site's config")
+        if any(a.split("=", 1)[0] in ("--force",) for a in args):
+            raise SandboxError("--force is not allowed")
+        args.append(f"--user={site.wc_user}")
     return cmd
 
 
