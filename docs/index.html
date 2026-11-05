@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta property="og:title" content="PressBridge: let Claude work on WordPress without the server keys">
+<meta property="og:title" content="PressBridge: the WordPress MCP that still works when WordPress doesn't">
 <meta property="og:description" content="Self-hosted MCP server with backups, undo, a WP-CLI allow-list and hidden secrets, plus a nightly security watch. For WordPress agencies.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect x='1' y='1' width='26' height='26' rx='6' fill='%23142231'/%3E%3Cpath d='M6 18 C 10 10, 18 10, 22 18' stroke='%23b86a00' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M6 20 H22' stroke='%23f3f5f7' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -15,7 +15,7 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <title>PressBridge</title>
-<meta name="description" content="Let Claude edit, update and audit your clients' WordPress sites without giving it the server. Self-hosted MCP server with backups, undo and a WP-CLI allow-list.">
+<meta name="description" content="The WordPress MCP that still works when WordPress doesn't. Let Claude fix your clients' sites without the server keys: backups, automatic rollback, a WP-CLI allow-list and hidden secrets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -260,8 +260,8 @@ footer a:hover { color: var(--ink); }
     <div class="wrap">
       <div class="hero-copy">
         <span class="eyebrow">MCP server for WordPress agencies</span>
-        <h1>Let Claude fix your clients' sites. <em>Without handing it the server.</em></h1>
-        <p class="lede">PressBridge connects Claude to the WordPress sites you manage. Claude can edit theme files, run plugin updates and write care-plan reports. It can't open a shell, read wp-config.php or touch anything you didn't allow. Every change is backed up and can be undone in one step.</p>
+        <h1>The WordPress MCP that still works <em>when WordPress doesn't.</em></h1>
+        <p class="lede">Let Claude fix your clients' sites without handing it the server. PressBridge runs outside WordPress, so Claude can repair a white screen, not just edit a healthy site. It can't open a shell, read wp-config.php or touch anything you didn't allow. Every change is backed up, checked, and undone automatically if it breaks the site.</p>
         <div class="ctas">
           <a class="btn btn-primary" href="#pricing">Buy Pro from $49</a>
           <a class="btn btn-ghost" href="#free">Try the free version</a>
@@ -283,6 +283,30 @@ footer a:hover { color: var(--ink); }
           <div class="t-res"><span class="t-ok">✓ exit 0</span>  5.9.8 → 6.0.1</div>
           <div class="t-say">Done. The header now shows 0745 123 456 (undo with backup 20261014T091322.418302Z). Contact Form 7 is updated. I can't read wp-config.php: PressBridge blocks it so database passwords never reach me.</div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="why" class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Why not a WordPress plugin?</span>
+        <h2>A plugin goes down with the site. PressBridge doesn't.</h2>
+        <p class="lede">MCP plugins run inside WordPress. When a bad update causes a white screen, the plugin is down too, right when you need Claude most. PressBridge works on the files and WP-CLI from outside, with its own rules.</p>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col"></th><th scope="col">MCP plugin inside WordPress</th><th scope="col" class="col-us">PressBridge</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Claude can fix a site that shows a critical error</td><td class="nope">No, the plugin is down too</td><td class="col-us yes">Yes</td></tr>
+            <tr><td>A change that breaks the site</td><td>Undo by hand, if you notice</td><td class="col-us yes">Checked and undone automatically</td></tr>
+            <tr><td>Database password and keys</td><td class="nope">Loaded in the same PHP process</td><td class="col-us yes">Never readable</td></tr>
+            <tr><td>Twenty client sites</td><td>Twenty plugins to install and update</td><td class="col-us yes">One server, one config, rights per site</td></tr>
+            <tr><td>Nightly security check</td><td>Separate tool</td><td class="col-us yes">Watch, on the Agent plan</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
