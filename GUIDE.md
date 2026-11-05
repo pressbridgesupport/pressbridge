@@ -83,7 +83,7 @@ Check which edition you have:
 
 ```bash
 pressbridge --version
-# pressbridge 1.1.0 (pro)
+# pressbridge 1.2.0 (pro)
 ```
 
 ---
@@ -119,11 +119,11 @@ servers, RunCloud, Ploi, SpinupWP, GridPane, ...).
 
 ```bash
 # on your computer
-scp pressbridge-pro-1.1.0.zip you@server:~
+scp pressbridge-pro-1.2.0.zip you@server:~
 
 # on the server
 ssh you@server
-unzip pressbridge-pro-1.1.0.zip
+unzip pressbridge-pro-1.2.0.zip
 cd pressbridge
 ```
 
@@ -255,7 +255,7 @@ docker compose exec pressbridge pressbridge check
 Expected:
 
 ```
-PressBridge 1.1.0 (pro)
+PressBridge 1.2.0 (pro)
 Data dir: /data
 - acme: root=/var/www/acme.com/public_html mode=write wp=/var/www/acme.com/public_html profile=maintenance
     WordPress 6.8.3
@@ -264,7 +264,7 @@ OK
 
 ```bash
 curl https://mcp.yourdomain.com/health
-# {"ok":true,"version":"1.1.0"}
+# {"ok":true,"version":"1.2.0"}
 
 curl -s -o /dev/null -w "%{http_code}\n" -X POST https://mcp.yourdomain.com/mcp
 # 401   ← correct: no token, no access
@@ -371,7 +371,7 @@ python3 -m venv ~/pressbridge-venv
 ~/pressbridge-venv/bin/pip install pressbridge
 
 # Pro or Agent, from the zip you downloaded:
-unzip pressbridge-pro-1.1.0.zip
+unzip pressbridge-pro-1.2.0.zip
 ~/pressbridge-venv/bin/pip install ./pressbridge
 
 ~/pressbridge-venv/bin/pressbridge --version
@@ -456,7 +456,8 @@ Unset variables become empty, and empty tokens or hosts are ignored.
 | `mode` | `read` | `read`: nothing can be changed. `write`: edits allowed (with backups). **Pro** |
 | `wp_profile` | `readonly` | `readonly` or `maintenance`. Maintenance needs `mode: write`. **Pro** |
 | `wp_path` | auto | WordPress install folder for WP-CLI. Detected automatically when `root` contains `wp-includes`. Set it for sites where WordPress is in a subfolder (e.g. `root: /var/www/site`, `wp_path: /var/www/site/wp`). |
-| `wp_url` | none | The site URL. Needed for multisite; also shown to Claude. |
+| `wp_url` | none | The site URL. Needed for multisite; also shown to Claude, and the address the health check loads. |
+| `health_check` | on | After each change, load the site and undo the change if it broke it. See [Automatic check and rollback](#automatic-check-and-rollback-pro). `false` turns it off. **Pro** |
 | `deny` | — | Extra glob patterns to hide, added to the defaults. |
 | `allow` | — | Default patterns to remove from the deny list (e.g. `debug.log`). |
 | `replace_default_deny` | `false` | `true` drops all default deny patterns. Not recommended. |
@@ -740,6 +741,10 @@ You talk to Claude normally. Name the site if you have more than one.
 
 Claude reports a `backup_id` after each change. Keep it in the conversation.
 
+After each change PressBridge checks that the site still loads. If the change broke it,
+the change is undone automatically and Claude tells you what failed (see
+[Automatic check and rollback](#automatic-check-and-rollback-pro)).
+
 ### Undoing (Pro)
 
 > Undo the last change on acme-staging.
@@ -831,6 +836,11 @@ Returns `type`, `size`, `mode` (like `-rw-r--r--`), `modified` (UTC).
 No parameters besides `site`. Runs four WP-CLI commands and returns
 `core_version`, `core_updates`, `plugins` and `themes` (name, status, version,
 update_version).
+
+### `check_site_health`
+No parameters besides `site`. Loads the pages listed in `health_check.urls` (default `/`)
+and boots WordPress through WP-CLI. Returns `ok` and one entry per check (HTTP status,
+or the fatal error). Available in every edition.
 
 ### `wp_commands`
 Lists every WP-CLI command the site allows, with a short description. Claude calls this
@@ -1064,6 +1074,55 @@ core updates). Keep your normal database and site backups.
 
 ---
 
+### Automatic check and rollback (Pro)
+
+Every change ends with a check. PressBridge loads the site's key pages (`/` by default,
+on `wp_url`) and asks WordPress to boot through WP-CLI. A check fails when a page answers
+with HTTP 5xx or can't be reached, when it shows "There has been a critical error",
+a PHP fatal or parse error, or "Error establishing a database connection", or when
+WP-CLI can't load WordPress.
+
+If the site passed the checks before the change and fails them after it, the change is
+undone immediately:
+
+| Change | How it is undone |
+|---|---|
+| `write_file`, `edit_file` | The previous version is restored from its backup (a new file goes to the trash) |
+| `move`, `trash`, `restore_backup` | Moved back, put back, or the replaced version restored |
+| `plugin activate` / `deactivate` | Deactivated / activated again |
+| `plugin update`, `theme update` | The previous plugin or theme files are put back (database changes made by the update are not reversed) |
+| `plugin install`, `theme install` | Deactivated if needed, then moved to the trash |
+| `theme activate` | The previous theme is activated again |
+| `option update` | The previous value is written back |
+| `core update`, `core update-db`, cron runs, rewrite flushes | Checked and reported, not undone: Claude tells you right away |
+
+The tool result then contains `rolled_back: true`, what failed, how it was undone and the
+result of a second check. The audit log records `rolled_back` too. Read-only commands,
+cache flushes, posts and maintenance mode are not checked.
+
+Checks that were already failing before the change never trigger a rollback, so an
+unrelated outage can't make PressBridge undo good work. A healthy result is reused for
+90 seconds, so a series of quick edits doesn't load the site twice per edit.
+
+```yaml
+sites:
+  acme:
+    root: /var/www/acme.com/public_html
+    wp_url: https://acme.com
+    mode: write
+    health_check:
+      urls: ["/", "/shop/", "/checkout/", "/contact/"]  # up to 10 paths on wp_url
+      auto_rollback: true        # false: report only, never undo
+      timeout: 15                # seconds per page
+      # base_url: http://wordpress   # if the server can't reach its own public URL
+      # verify_tls: false            # self-signed staging certificates
+      # wp_cli: false                # skip the WP-CLI boot check
+```
+
+`health_check: false` turns it off for a site. Without `wp_url` (and no `base_url`) only
+the WP-CLI check runs. In Docker installs where WordPress runs in another container, set
+`base_url` to the address the PressBridge container can reach, such as `http://wordpress`.
+
 ## 13. Audit log
 
 Every tool call, allowed or refused, is one line in `data_dir/audit.jsonl`:
@@ -1186,7 +1245,7 @@ claude mcp add --transport http pressbridge https://mcp.yourdomain.com/mcp \
 ```bash
 cd ~
 cp pressbridge/config.yaml pressbridge/.env /tmp/      # keep your settings
-unzip -o pressbridge-pro-1.1.0.zip
+unzip -o pressbridge-pro-1.2.0.zip
 cp /tmp/config.yaml /tmp/.env pressbridge/
 cd pressbridge
 docker compose --profile tls up -d --build
@@ -1298,7 +1357,7 @@ Docker:
 ```bash
 cd ~/pressbridge
 docker compose --profile tls down -v       # -v also deletes backups and audit log
-docker image rm pressbridge:1.1.0
+docker image rm pressbridge:1.2.0
 cd ~ && rm -rf pressbridge
 ```
 

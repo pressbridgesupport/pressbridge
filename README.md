@@ -2,7 +2,7 @@
 
 <!-- mcp-name: io.github.pressbridgesupport/pressbridge -->
 
-**Let Claude look inside your WordPress site safely: read-only, sandboxed, secrets hidden.**
+**The WordPress MCP that still works when WordPress doesn't.** Let Claude look inside your WordPress site safely: read-only, sandboxed, secrets hidden. Runs outside WordPress, so it works even when the site shows a critical error.
 
 [Website](https://pressbridgesupport.github.io/pressbridge) · [Demo video](https://youtu.be/hucKMlugERw) · [Get Pro](https://pressbridgesupport.github.io/pressbridge/#pricing) · [User guide](GUIDE.md) · [Security](SECURITY.md)
 
@@ -25,6 +25,7 @@ for one site: perfect for debugging, audits and "where is this text coming from?
 - Nothing outside the site folder, symlink tricks included
 - Read-only WP-CLI: versions, plugin and theme lists, checksums, cron, users
 - `site_overview`: version and pending updates in one call
+- `check_site_health`: is the site up right now? Loads key pages and boots WordPress
 - Includes the **wp-care-report** skill: a client-ready health and security report
 
 ## Install (5 minutes, nothing exposed to the internet)
@@ -79,7 +80,7 @@ The full user guide, with every command, config option and tool, is in
 
 ## Want Claude to fix things too?
 
-**PressBridge Pro** adds editing with automatic backups and one-call undo, PHP syntax
+**PressBridge Pro** adds editing with automatic backups and one-call undo, a check after every change that rolls it back automatically if it broke the site, PHP syntax
 checks before saving, plugin/theme/core updates, unlimited sites, a remote HTTPS server
 with Docker and automatic certificates, the audit log, and skills for safe edits and
 safe updates.

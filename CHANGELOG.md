@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — 2026-11
+
+- New `check_site_health` tool (all editions): loads the site's key pages and boots
+  WordPress through WP-CLI, and reports what's broken.
+- Pro: every change is checked afterwards and undone automatically if it broke the site
+  (HTTP 5xx, "There has been a critical error", PHP fatal errors, WP-CLI can't load
+  WordPress). Configured per site with `health_check`.
+
 ## 1.1.0 — 2026-10
 
 New: **PressBridge Watch** (Agent edition), a nightly security agent.
