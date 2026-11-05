@@ -15,6 +15,7 @@ from pathlib import Path
 import yaml
 
 from .edition import EDITION
+from .health import HealthSettings, parse_health
 
 DEFAULT_DENY = [
     "wp-config*",
@@ -57,6 +58,7 @@ class Site:
     max_read_bytes: int = 512_000
     max_write_bytes: int = 2_000_000
     watched: bool = True
+    health: HealthSettings = field(default_factory=HealthSettings)
 
     @property
     def writable(self) -> bool:
@@ -147,6 +149,11 @@ def _parse_site(name: str, raw: dict) -> Site:
         if pattern in deny:
             deny.remove(pattern)
 
+    try:
+        health = parse_health(raw.get("health_check"), raw.get("wp_url"))
+    except ValueError as e:
+        raise ConfigError(f"Site '{name}': {e}") from None
+
     return Site(
         name=name,
         root=root.resolve(),
@@ -158,6 +165,7 @@ def _parse_site(name: str, raw: dict) -> Site:
         max_read_bytes=int(raw.get("max_read_bytes", 512_000)),
         max_write_bytes=int(raw.get("max_write_bytes", 2_000_000)),
         watched=bool(raw.get("watch", True)),
+        health=health,
     )
 
 

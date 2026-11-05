@@ -10,7 +10,7 @@ from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
-from . import __version__, audit, files, wpcli
+from . import __version__, audit, files, guard, health, wpcli
 from .config import Config, ConfigError
 from .edition import EDITION
 from .sandbox import SandboxError
@@ -21,6 +21,8 @@ Paths are relative to each site's root. Secrets (wp-config.php, .env, keys, SQL 
 are blocked on purpose; do not try to work around the blocks.
 Before changing a file, read it. Prefer edit_file over write_file for small changes.
 Every change is backed up; tell the user the backup_id so they can undo it.
+After each change PressBridge checks that the site still loads. If a result says
+rolled_back: true, the change broke the site and was undone: tell the user what failed.
 For WP-CLI, call wp_commands first to see what this site allows, then call wp
 with a list of arguments, without the leading "wp".
 """
@@ -33,7 +35,8 @@ DESTRUCTIVE = ToolAnnotations(readOnlyHint=False, destructiveHint=True, openWorl
 def _summary(result: Any) -> dict | None:
     if not isinstance(result, dict):
         return None
-    keep = ("path", "bytes", "backup_id", "trash_id", "exit_code", "command", "replacements", "restored")
+    keep = ("path", "bytes", "backup_id", "trash_id", "exit_code", "command", "replacements", "restored",
+            "rolled_back")
     return {k: result[k] for k in keep if k in result} or None
 
 
@@ -81,6 +84,7 @@ def build_server(cfg: Config) -> MCPServer:
                     "wordpress": bool(s.wp_path),
                     "wp_profile": s.wp_profile if s.wp_path else None,
                     "url": s.wp_url,
+                    "health_check": s.health.enabled and bool(s.health.base_url or s.wp_path),
                 }
                 for s in cfg.sites.values()
             ],
@@ -128,7 +132,11 @@ def build_server(cfg: Config) -> MCPServer:
     @audited("wp")
     def wp(args: list[str], site: str | None = None) -> dict:
         """Run an allowed WP-CLI command. args without 'wp', e.g. ["plugin", "list", "--update=available"]."""
-        return wpcli.run(cfg, cfg.site(site), args)
+        s = cfg.site(site)
+        checked, undo = guard.prepare_wp(cfg, s, list(args)) if EDITION != "free" else (False, None)
+        if not checked:
+            return wpcli.run(cfg, s, args)
+        return guard.run(cfg, s, lambda: wpcli.run(cfg, s, args), undo)
 
     @server.tool(annotations=READ_ONLY)
     @audited("site_overview")
@@ -156,6 +164,17 @@ def build_server(cfg: Config) -> MCPServer:
                 out[key] = text
         return out
 
+    @server.tool(annotations=READ_ONLY)
+    @audited("check_site_health")
+    def check_site_health(site: str | None = None) -> dict:
+        """Load the site's key pages and boot WordPress now: is the site up, any fatal errors?"""
+        s = cfg.site(site)
+        snap = health.snapshot(cfg, s)
+        if snap is None:
+            return {"site": s.name, "checked": False,
+                    "note": "Nothing to check: set wp_url (or health_check.base_url) for this site."}
+        return {"site": s.name, "checked": True, "ok": snap.ok, "checks": snap.to_list()}
+
     if EDITION == "free":
         return server
 
@@ -165,26 +184,32 @@ def build_server(cfg: Config) -> MCPServer:
     @audited("write_file")
     def write_file(path: str, content: str, create_dirs: bool = False, site: str | None = None) -> dict:
         """Create or overwrite a file. The old version is backed up first."""
-        return files.write_file(cfg, cfg.site(site), path, content, create_dirs)
+        s = cfg.site(site)
+        return guard.run(cfg, s, lambda: files.write_file(cfg, s, path, content, create_dirs),
+                         guard.undo_write(cfg, s, path))
 
     @server.tool(annotations=WRITES)
     @audited("edit_file")
     def edit_file(path: str, old_text: str, new_text: str, replace_all: bool = False,
                   site: str | None = None) -> dict:
         """Replace exact text in a file. old_text must match once unless replace_all is true."""
-        return files.edit_file(cfg, cfg.site(site), path, old_text, new_text, replace_all)
+        s = cfg.site(site)
+        return guard.run(cfg, s, lambda: files.edit_file(cfg, s, path, old_text, new_text, replace_all),
+                         guard.undo_write(cfg, s, path))
 
     @server.tool(annotations=WRITES)
     @audited("move")
     def move(source: str, destination: str, site: str | None = None) -> dict:
         """Move or rename a file or folder inside the same site."""
-        return files.move(cfg, cfg.site(site), source, destination)
+        s = cfg.site(site)
+        return guard.run(cfg, s, lambda: files.move(cfg, s, source, destination), guard.undo_move(cfg, s))
 
     @server.tool(annotations=DESTRUCTIVE)
     @audited("trash")
     def trash(path: str, site: str | None = None) -> dict:
         """Move a file or folder to the trash outside the webroot (restorable)."""
-        return files.trash(cfg, cfg.site(site), path)
+        s = cfg.site(site)
+        return guard.run(cfg, s, lambda: files.trash(cfg, s, path), guard.undo_trash(cfg, s))
 
     @server.tool(annotations=READ_ONLY)
     @audited("list_backups")
@@ -196,7 +221,9 @@ def build_server(cfg: Config) -> MCPServer:
     @audited("restore_backup")
     def restore_backup(backup_id: str, path: str, site: str | None = None) -> dict:
         """Put a backed-up or trashed file back. The current version is backed up first."""
-        return files.restore_backup(cfg, cfg.site(site), backup_id, path)
+        s = cfg.site(site)
+        return guard.run(cfg, s, lambda: files.restore_backup(cfg, s, backup_id, path),
+                         guard.undo_restore(cfg, s))
 
     @server.tool(annotations=READ_ONLY)
     @audited("audit_log")
