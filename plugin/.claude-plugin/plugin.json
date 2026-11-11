@@ -1,0 +1,14 @@
+{
+  "name": "pressbridge",
+  "version": "1.3.2",
+  "description": "Diagnose and report on WordPress sites with Claude through the PressBridge MCP server: white-screen diagnosis, client-ready care reports, setup help.",
+  "author": {
+    "name": "PressBridge",
+    "email": "pressbridge.support@gmail.com",
+    "url": "https://pressbridgesupport.github.io/pressbridge"
+  },
+  "homepage": "https://pressbridgesupport.github.io/pressbridge",
+  "repository": "https://github.com/pressbridgesupport/pressbridge",
+  "license": "MIT",
+  "keywords": ["wordpress", "mcp", "wp-cli", "maintenance", "woocommerce"]
+}
