@@ -302,6 +302,7 @@ footer a:hover { color: var(--ink); }
           <tbody>
             <tr><td>Claude can fix a site that shows a critical error</td><td class="nope">No, the plugin is down too</td><td class="col-us yes">Yes</td></tr>
             <tr><td>A change that breaks the site</td><td>Undo by hand, if you notice</td><td class="col-us yes">Checked and undone automatically</td></tr>
+            <tr><td>Changes only after a person says yes</td><td>Depends on the plugin</td><td class="col-us yes">Approval mode, per site, with a diff to approve</td></tr>
             <tr><td>Database password and keys</td><td class="nope">Loaded in the same PHP process</td><td class="col-us yes">Never readable</td></tr>
             <tr><td>Twenty client sites</td><td>Twenty plugins to install and update</td><td class="col-us yes">One server, one config, rights per site</td></tr>
             <tr><td>Nightly security check</td><td>Separate tool</td><td class="col-us yes">Watch, on the Agent plan</td></tr>
@@ -559,6 +560,7 @@ docker compose --profile tls up -d</pre>
             <li>Unlimited sites and servers</li>
             <li>Your whole team</li>
             <li>Edits with backups and undo</li>
+            <li>Approval mode: nothing changes without your yes</li>
             <li>Updates, cache, options, posts</li>
             <li>WooCommerce prices, stock, coupons</li>
             <li>HTTPS server, Docker, tokens</li>
