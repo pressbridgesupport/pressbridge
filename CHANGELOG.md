@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.2 — 2026-11
+
+- PressBridge is now a Claude Code plugin: `/plugin marketplace add pressbridgesupport/pressbridge`.
+- New **wp-white-screen** skill: finds why a site shows a critical error and gives the exact fix.
+- New `/pressbridge-setup` command that walks through the install.
+- Free edition: when you ask for a change, Claude shows the exact fix to apply yourself.
+
 ## 1.3.0 — 2026-11
 
 New: **WooCommerce** through WP-CLI.

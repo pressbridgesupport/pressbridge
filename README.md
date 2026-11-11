@@ -28,7 +28,7 @@ for one site: perfect for debugging, audits and "where is this text coming from?
   (set `wc_user` in the config; orders and customers only if you turn them on)
 - `site_overview`: version and pending updates in one call
 - `check_site_health`: is the site up right now? Loads key pages and boots WordPress
-- Includes the **wp-care-report** skill: a client-ready health and security report
+- Includes the **wp-care-report** and **wp-white-screen** skills, also as a Claude Code plugin
 
 ## Install (5 minutes, nothing exposed to the internet)
 
@@ -73,6 +73,22 @@ Claude Desktop (`claude_desktop_config.json`, Settings → Developer → Edit Co
   }
 }
 ```
+
+### Claude Code plugin: skills and setup help
+
+PressBridge is also a Claude Code plugin with the **wp-white-screen** skill (finds why a
+site shows "There has been a critical error" and gives the exact fix), the
+**wp-care-report** skill and a `/pressbridge-setup` command that walks you through the
+install:
+
+```
+/plugin marketplace add pressbridgesupport/pressbridge
+/plugin install pressbridge@pressbridge
+```
+
+The plugin adds the skills; the MCP server itself still runs where the site files are,
+as above. With [uv](https://docs.astral.sh/uv/) you can skip the virtualenv and run
+`uvx pressbridge serve --config ~/.pressbridge/config.yaml`.
 
 Then ask Claude: *"Give me a health overview of mysite"* or *"Where in the theme is the
 footer phone number set?"*
