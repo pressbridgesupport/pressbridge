@@ -1,0 +1,19 @@
+{
+  "name": "pressbridge",
+  "owner": {
+    "name": "PressBridge",
+    "email": "pressbridge.support@gmail.com"
+  },
+  "metadata": {
+    "description": "Safe Claude access to WordPress sites: read-only by default, secrets hidden, works when WordPress is down."
+  },
+  "plugins": [
+    {
+      "name": "pressbridge",
+      "source": "./plugin",
+      "description": "Diagnose and report on WordPress sites with Claude through the PressBridge MCP server: white-screen diagnosis, client-ready care reports, setup help.",
+      "category": "development",
+      "homepage": "https://pressbridgesupport.github.io/pressbridge"
+    }
+  ]
+}
