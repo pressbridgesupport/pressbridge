@@ -83,7 +83,7 @@ Check which edition you have:
 
 ```bash
 pressbridge --version
-# pressbridge 1.3.0 (pro)
+# pressbridge 1.4.0 (pro)
 ```
 
 ---
@@ -119,11 +119,11 @@ servers, RunCloud, Ploi, SpinupWP, GridPane, ...).
 
 ```bash
 # on your computer
-scp pressbridge-pro-1.3.0.zip you@server:~
+scp pressbridge-pro-1.4.0.zip you@server:~
 
 # on the server
 ssh you@server
-unzip pressbridge-pro-1.3.0.zip
+unzip pressbridge-pro-1.4.0.zip
 cd pressbridge
 ```
 
@@ -255,7 +255,7 @@ docker compose exec pressbridge pressbridge check
 Expected:
 
 ```
-PressBridge 1.3.0 (pro)
+PressBridge 1.4.0 (pro)
 Data dir: /data
 - acme: root=/var/www/acme.com/public_html mode=write wp=/var/www/acme.com/public_html profile=maintenance
     WordPress 6.8.3
@@ -264,7 +264,7 @@ OK
 
 ```bash
 curl https://mcp.yourdomain.com/health
-# {"ok":true,"version":"1.3.0"}
+# {"ok":true,"version":"1.4.0"}
 
 curl -s -o /dev/null -w "%{http_code}\n" -X POST https://mcp.yourdomain.com/mcp
 # 401   ← correct: no token, no access
@@ -371,7 +371,7 @@ python3 -m venv ~/pressbridge-venv
 ~/pressbridge-venv/bin/pip install pressbridge
 
 # Pro or Agent, from the zip you downloaded:
-unzip pressbridge-pro-1.3.0.zip
+unzip pressbridge-pro-1.4.0.zip
 ~/pressbridge-venv/bin/pip install ./pressbridge
 
 ~/pressbridge-venv/bin/pressbridge --version
@@ -459,6 +459,7 @@ Unset variables become empty, and empty tokens or hosts are ignored.
 | `wp_url` | none | The site URL. Needed for multisite; also shown to Claude, and the address the health check loads. |
 | `health_check` | on | After each change, load the site and undo the change if it broke it. See [Automatic check and rollback](#automatic-check-and-rollback-pro). `false` turns it off. **Pro** |
 | `wc_user` | none | WordPress user that WooCommerce commands (`wp wc ...`) run as, e.g. `shop-manager`. Needed for any `wc` command. Use a Shop manager account, not an administrator. |
+| `require_approval` | `false` | `true` = approval mode (Pro): no change runs until a person approves it. See [Approval mode](#approval-mode-pro). |
 | `wc_personal_data` | `false` | `true` lets Claude read orders, customers and refunds (names, emails, addresses). Off by default. |
 | `deny` | — | Extra glob patterns to hide, added to the defaults. |
 | `allow` | — | Default patterns to remove from the deny list (e.g. `debug.log`). |
@@ -747,6 +748,9 @@ After each change PressBridge checks that the site still loads. If the change br
 the change is undone automatically and Claude tells you what failed (see
 [Automatic check and rollback](#automatic-check-and-rollback-pro)).
 
+On sites with `require_approval: true`, nothing changes until you say yes: see
+[Approval mode](#approval-mode-pro).
+
 ### Undoing (Pro)
 
 > Undo the last change on acme-staging.
@@ -916,6 +920,14 @@ old version back. Works for trashed files too.
 | `limit` | `50` | Up to 500 |
 
 Recent calls, newest first, optionally for one site.
+
+### `apply_change` (Pro)
+| Param | Default | |
+|---|---|---|
+| `proposal_id` | | From a change held for approval |
+
+Applies a change held on an approval-mode site, after the person has agreed to it.
+Proposals expire after 30 minutes and can be applied once.
 
 ---
 
@@ -1134,6 +1146,32 @@ sites:
 the WP-CLI check runs. In Docker installs where WordPress runs in another container, set
 `base_url` to the address the PressBridge container can reach, such as `http://wordpress`.
 
+### Approval mode (Pro)
+
+For client sites where nothing may change without a person's say-so, set
+`require_approval: true` on the site. Reading is unaffected; every change (file writes,
+edits, moves, trash, restores, and WP-CLI commands that change the site) waits for a yes:
+
+- **Clients that show approval prompts** (MCP elicitation): PressBridge asks you directly,
+  with the exact change, a diff for file edits or the full command for WP-CLI. The answer
+  comes from you through the client, not from Claude. No means nothing is changed.
+- **Other clients**: the change is held as a proposal and nothing is touched. Claude shows
+  you the change and, only after you agree, calls `apply_change` with the proposal id.
+  `apply_change` is marked destructive, so the client asks you before running it.
+  Proposals expire after 30 minutes.
+
+Approved changes still get a backup, the check after the change and automatic rollback.
+Proposals, approvals and refusals all appear in the audit log.
+
+```yaml
+sites:
+  acme:
+    root: /var/www/acme/public_html
+    mode: write
+    wp_profile: maintenance
+    require_approval: true
+```
+
 ## 13. Audit log
 
 Every tool call, allowed or refused, is one line in `data_dir/audit.jsonl`:
@@ -1256,7 +1294,7 @@ claude mcp add --transport http pressbridge https://mcp.yourdomain.com/mcp \
 ```bash
 cd ~
 cp pressbridge/config.yaml pressbridge/.env /tmp/      # keep your settings
-unzip -o pressbridge-pro-1.3.0.zip
+unzip -o pressbridge-pro-1.4.0.zip
 cp /tmp/config.yaml /tmp/.env pressbridge/
 cd pressbridge
 docker compose --profile tls up -d --build
@@ -1368,7 +1406,7 @@ Docker:
 ```bash
 cd ~/pressbridge
 docker compose --profile tls down -v       # -v also deletes backups and audit log
-docker image rm pressbridge:1.3.0
+docker image rm pressbridge:1.4.0
 cd ~ && rm -rf pressbridge
 ```
 
